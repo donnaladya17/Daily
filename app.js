@@ -225,7 +225,7 @@ function renderLoading(){
   ['#taskList','#catList','#txList','#habitList'].forEach(function(s){ $(s).replaceChildren(el('p',{class:'loading',text:'Memuat data Anda…'})); });
 }
 function glanceRow(label,sub,val){
-  return el('div',null, el('div',null, el('span',{class:'g-label',text:label}), el('span',{class:'g-sub',text:sub})), el('strong',{class:'g-val',text:val}));
+  return el('div',null, el('span',{class:'g-label',text:label}), el('strong',{class:'g-val',text:val}), el('span',{class:'g-sub',text:sub}));
 }
 function emptyState(title,body){ return el('div',{class:'empty'}, el('strong',{text:title}), el('p',{text:body})); }
 
@@ -263,7 +263,7 @@ function duePill(t){
   return el('span',{class:'pill '+cls,text:label});
 }
 function taskRow(t){
-  return el('li',{class:t.done?'done':''},
+  return el('li',{class:(t.done?'done':'')+(t.prio===1&&!t.done?' p1':'')},
     el('button',{class:'check',type:'button','aria-pressed':t.done?'true':'false','aria-label':(t.done?'Tandai belum selesai: ':'Tandai selesai: ')+t.text,onclick:function(){ t.done=!t.done; commit(); }}),
     el('div',{class:'t-body'},
       el('span',{class:'t-text',text:t.text}),

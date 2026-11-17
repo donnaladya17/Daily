@@ -17,11 +17,12 @@
 <body>
 <div class="wrap">
   <header>
-    <p class="brand">Harianku</p>
+    <p class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>Harianku</p>
     <h1 id="greet">Selamat datang</h1>
     <p class="date" id="date"></p>
-    <div class="glance" id="glance" aria-live="polite"></div>
   </header>
+
+  <div class="glance" id="glance" aria-live="polite"></div>
 
   <div class="sample-note" id="sampleNote" hidden>
     <span>Isi di bawah ini hanya contoh supaya Anda bisa melihat cara kerjanya.</span>
@@ -29,10 +30,10 @@
   </div>
 
   <nav class="tabs" aria-label="Bagian aplikasi">
-    <button class="tab" type="button" id="tab-tugas" data-view="tugas">Tugas</button>
-    <button class="tab" type="button" id="tab-uang" data-view="uang">Keuangan</button>
-    <button class="tab" type="button" id="tab-kebiasaan" data-view="kebiasaan">Kebiasaan</button>
-    <button class="tab" type="button" id="tab-data" data-view="data">Data</button>
+    <button class="tab" type="button" id="tab-tugas" data-view="tugas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Tugas</span></button>
+    <button class="tab" type="button" id="tab-uang" data-view="uang"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg><span>Keuangan</span></button>
+    <button class="tab" type="button" id="tab-kebiasaan" data-view="kebiasaan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15l4-4 3 3 5-6 4 4"/><path d="M4 20h16"/></svg><span>Kebiasaan</span></button>
+    <button class="tab" type="button" id="tab-data" data-view="data"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Data</span></button>
   </nav>
 
   <main>
