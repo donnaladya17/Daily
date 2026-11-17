@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B6B66">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Harianku">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Harianku</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="brand">Harianku</p>
+    <h1 id="greet">Selamat datang</h1>
+    <p class="date" id="date"></p>
+    <div class="glance" id="glance" aria-live="polite"></div>
+  </header>
+
+  <div class="sample-note" id="sampleNote" hidden>
+    <span>Isi di bawah ini hanya contoh supaya Anda bisa melihat cara kerjanya.</span>
+    <button class="linkbtn" type="button" id="clearSample">Hapus semua contoh</button>
+  </div>
+
+  <nav class="tabs" aria-label="Bagian aplikasi">
+    <button class="tab" type="button" id="tab-tugas" data-view="tugas">Tugas</button>
+    <button class="tab" type="button" id="tab-uang" data-view="uang">Keuangan</button>
+    <button class="tab" type="button" id="tab-kebiasaan" data-view="kebiasaan">Kebiasaan</button>
+  </nav>
+
+  <main>
+    <section class="view" id="view-tugas">
+      <fieldset class="bare" id="fs-task" disabled>
+        <form class="addrow" id="taskForm">
+          <input class="grow" type="text" id="taskText" placeholder="Tulis tugas, misalnya bayar tagihan air" aria-label="Tugas baru" autocomplete="off" required maxlength="140">
+          <input type="date" id="taskDue" aria-label="Tenggat">
+          <select id="taskPrio" aria-label="Prioritas">
+            <option value="1">Penting</option>
+            <option value="2" selected>Biasa</option>
+            <option value="3">Santai</option>
+          </select>
+          <button class="btn" type="submit">Tambah</button>
+        </form>
+      </fieldset>
+      <div id="taskList" style="margin-top:22px"></div>
+    </section>
+
+    <section class="view" id="view-uang" hidden>
+      <fieldset class="bare" id="fs-money" disabled>
+        <form id="moneyForm">
+          <div class="seg" role="radiogroup" aria-label="Jenis catatan">
+            <input type="radio" name="mType" id="mOut" value="out" checked><label for="mOut">Pengeluaran</label>
+            <input type="radio" name="mType" id="mIn" value="in"><label for="mIn">Pemasukan</label>
+          </div>
+          <div class="addrow" style="margin-top:10px">
+            <input type="number" id="mAmount" inputmode="numeric" min="1" step="1" placeholder="Jumlah (Rp)" aria-label="Jumlah dalam rupiah" required style="width:150px">
+            <select id="mCat" aria-label="Kategori">
+              <option>Makan &amp; minum</option>
+              <option>Transportasi</option>
+              <option>Belanja harian</option>
+              <option>Tagihan</option>
+              <option>Hiburan</option>
+              <option>Kesehatan</option>
+              <option>Lainnya</option>
+            </select>
+            <input class="grow" type="text" id="mNote" placeholder="Catatan (boleh kosong)" aria-label="Catatan" autocomplete="off" maxlength="80">
+            <button class="btn" type="submit">Catat</button>
+          </div>
+        </form>
+      </fieldset>
+
+      <div class="glance" id="moneyGlance" style="margin-top:22px"></div>
+
+      <div class="budget">
+        <div class="budget-top">
+          <label for="budgetInput">Batas pengeluaran bulan ini</label>
+          <fieldset class="bare" id="fs-budget" disabled><input type="number" id="budgetInput" inputmode="numeric" min="0" step="1" placeholder="Rp 0"></fieldset>
+        </div>
+        <div class="bar" id="budgetBar"><i></i></div>
+        <p id="budgetText"></p>
+      </div>
+
+      <h2 class="sec">Ke mana uangnya pergi</h2>
+      <div id="catList"></div>
+
+      <h2 class="sec">Catatan terbaru</h2>
+      <div id="txList"></div>
+    </section>
+
+    <section class="view" id="view-kebiasaan" hidden>
+      <fieldset class="bare" id="fs-habit" disabled>
+        <form class="addrow" id="habitForm">
+          <input class="grow" type="text" id="habitText" placeholder="Kebiasaan baru, misalnya tidur sebelum jam 22.00" aria-label="Kebiasaan baru" autocomplete="off" required maxlength="80">
+          <button class="btn" type="submit">Tambah</button>
+        </form>
+      </fieldset>
+      <div id="habitList" style="margin-top:22px"></div>
+    </section>
+  </main>
+
+  <p class="foot" id="syncNote"></p>
+</div>
+
+<div class="toast" id="toast" hidden><div class="toast-box" id="toastBox" role="status"></div></div>
+<script src="app.js"></script>
+</body>
+</html>
