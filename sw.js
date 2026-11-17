@@ -1,5 +1,5 @@
 /* Service worker Harianku: simpan berkas aplikasi agar bisa dibuka tanpa internet. */
-var CACHE = 'harianku-v1';
+var CACHE = 'harianku-v2';
 var SHELL = [
   './',
   'index.html',

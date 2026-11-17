@@ -32,6 +32,7 @@
     <button class="tab" type="button" id="tab-tugas" data-view="tugas">Tugas</button>
     <button class="tab" type="button" id="tab-uang" data-view="uang">Keuangan</button>
     <button class="tab" type="button" id="tab-kebiasaan" data-view="kebiasaan">Kebiasaan</button>
+    <button class="tab" type="button" id="tab-data" data-view="data">Data</button>
   </nav>
 
   <main>
@@ -101,6 +102,44 @@
         </form>
       </fieldset>
       <div id="habitList" style="margin-top:22px"></div>
+    </section>
+
+    <section class="view" id="view-data" hidden>
+      <h2 class="sec">Unduh sebagai CSV</h2>
+      <p class="hint">Berkas CSV bisa dibuka di Google Sheets (File, Impor) atau Excel. Isi contoh tidak ikut diunduh.</p>
+      <div class="btnrow">
+        <button class="btn quiet" type="button" data-csv="tugas">Tugas</button>
+        <button class="btn quiet" type="button" data-csv="keuangan">Keuangan</button>
+        <button class="btn quiet" type="button" data-csv="kebiasaan">Kebiasaan</button>
+      </div>
+
+      <h2 class="sec">Kirim ke Google Sheets</h2>
+      <p class="hint">Setiap perubahan dikirim ke Google Sheet Anda sendiri lewat skrip yang Anda pasang. Arahnya satu arah: dari aplikasi ke sheet. Isi contoh tidak ikut terkirim.</p>
+      <form class="sheetform" id="sheetForm">
+        <label for="sheetUrl">Alamat aplikasi web (berakhiran /exec)</label>
+        <input type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" spellcheck="false">
+        <label for="sheetPass">Kata sandi (sama dengan yang ada di skrip)</label>
+        <input type="password" id="sheetPass" autocomplete="off">
+        <label class="check-line" for="sheetOn"><input type="checkbox" id="sheetOn"> Kirim otomatis setiap ada perubahan</label>
+        <div class="btnrow">
+          <button class="btn" type="submit">Simpan pengaturan</button>
+          <button class="btn quiet" type="button" id="sheetNow">Kirim sekarang</button>
+        </div>
+        <p class="hint" id="sheetStatus" aria-live="polite" style="margin:0"></p>
+      </form>
+
+      <details class="howto">
+        <summary>Cara memasang skrip di Google Sheets</summary>
+        <ol>
+          <li>Buat sheet kosong di <code>sheets.new</code>.</li>
+          <li>Buka <b>Ekstensi</b>, lalu <b>Apps Script</b>.</li>
+          <li>Hapus isi editor, lalu tempel isi berkas <code>google-apps-script.gs</code>. Ganti nilai <code>KATA_SANDI</code> dengan kata sandi Anda sendiri, lalu simpan.</li>
+          <li>Klik <b>Terapkan</b>, lalu <b>Penerapan baru</b>. Pilih jenis <b>Aplikasi web</b>. Isi <b>Jalankan sebagai</b> dengan <b>Saya</b> dan <b>Yang memiliki akses</b> dengan <b>Siapa saja</b>. Klik <b>Terapkan</b> dan beri izin saat diminta. Kalau muncul peringatan aplikasi belum diverifikasi, pilih <b>Lanjutan</b>, lalu lanjutkan ke skrip Anda.</li>
+          <li>Salin <b>URL aplikasi web</b> yang berakhiran <code>/exec</code>, tempel di kolom di atas bersama kata sandi yang sama, lalu klik <b>Simpan pengaturan</b>.</li>
+          <li>Klik <b>Kirim sekarang</b>. Sheet bernama Tugas, Keuangan, dan Kebiasaan akan muncul di sheet Anda.</li>
+        </ol>
+        <p class="hint" style="margin:12px 0 0">Kalau Anda mengubah skripnya nanti, buat <b>Penerapan baru</b> lagi agar perubahannya berlaku. Alamat dan kata sandi hanya tersimpan di browser ini. Kalau dua perangkat mengirim ke sheet yang sama, yang terakhir kirim menimpa yang lain.</p>
+      </details>
     </section>
   </main>
 

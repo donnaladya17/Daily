@@ -27,7 +27,7 @@ function el(tag, props){
 }
 
 var LS_KEY='harianku-v1';
-var VIEWS=['tugas','uang','kebiasaan'];
+var VIEWS=['tugas','uang','kebiasaan','data'];
 var state=null, ready=false;
 
 /* ---------- Data contoh ---------- */
@@ -85,10 +85,113 @@ function flush(){
     var snap=clone(state);
     lsWrite(snap);
     setStatus(okText());
+    queueSheet();
   }while(again);
   saving=false;
 }
 function commit(){ save(); renderAll(); }
+
+/* ---------- Ekspor CSV ---------- */
+function notEx(x){ return !x.ex; }
+function csvCell(v){
+  var s=String(v==null?'':v);
+  if(typeof v==='string' && /^[=+\-@]/.test(s)) s="'"+s;
+  return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+}
+function csvText(rows){ return '﻿'+rows.map(function(r){ return r.map(csvCell).join(','); }).join('\r\n')+'\r\n'; }
+var PRIO={1:'Penting',2:'Biasa',3:'Santai'};
+function tableData(){
+  var tugas=[['Tugas','Selesai','Tenggat','Prioritas']];
+  state.tasks.filter(notEx).forEach(function(t){ tugas.push([t.text,t.done?'Ya':'Tidak',t.due||'',PRIO[t.prio]||'Biasa']); });
+  var keuangan=[['Tanggal','Jenis','Kategori','Catatan','Jumlah']];
+  state.expenses.filter(notEx).map(function(e,i){ return {e:e,i:i}; })
+    .sort(function(a,b){ return a.e.date<b.e.date?-1:a.e.date>b.e.date?1:a.i-b.i; })
+    .forEach(function(x){ var e=x.e; keuangan.push([e.date,e.type==='in'?'Pemasukan':'Pengeluaran',e.cat,e.note||'',e.amount]); });
+  var kebiasaan=[['Kebiasaan','Tanggal']];
+  state.habits.filter(notEx).forEach(function(h){ Object.keys(h.log).sort().forEach(function(d){ kebiasaan.push([h.name,d]); }); });
+  return {tugas:tugas,keuangan:keuangan,kebiasaan:kebiasaan};
+}
+function anchorSave(blob,name){
+  var u=URL.createObjectURL(blob), a=el('a',{href:u,download:name});
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(u); },4000);
+}
+function saveFile(name,text){
+  var blob=new Blob([text],{type:'text/csv;charset=utf-8'}), file=null;
+  try{ file=new File([blob],name,{type:'text/csv'}); }catch(e){}
+  var coarse=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
+  if(file&&coarse&&navigator.canShare&&navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:name}).catch(function(err){ if(!err||err.name!=='AbortError') anchorSave(blob,name); });
+    return;
+  }
+  anchorSave(blob,name);
+}
+document.querySelectorAll('[data-csv]').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(!ready) return;
+    var k=b.dataset.csv;
+    saveFile('harianku-'+k+'-'+dayStr(0)+'.csv',csvText(tableData()[k]));
+  });
+});
+
+/* ---------- Kirim ke Google Sheets ---------- */
+var SHEET_KEY='harianku-sheet-v1';
+var sheet={url:'',pass:'',on:false,last:''};
+try{ var sr=JSON.parse(localStorage.getItem(SHEET_KEY)||'null'); if(sr) sheet=Object.assign(sheet,sr); }catch(e){}
+function sheetStore(){ try{ localStorage.setItem(SHEET_KEY,JSON.stringify(sheet)); }catch(e){} }
+function sheetMsg(t,bad){ var p=$('#sheetStatus'); p.textContent=t; p.className='hint'+(bad?' bad':''); p.style.margin='0'; }
+function validUrl(u){ return /^https:\/\/script\.google\.com\/.+\/exec$/.test(u); }
+function readSheetForm(){
+  sheet.url=$('#sheetUrl').value.trim();
+  sheet.pass=$('#sheetPass').value;
+  sheet.on=$('#sheetOn').checked;
+  sheetStore();
+}
+function sheetDone(prefix){
+  sheet.last=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  sheetStore();
+  sheetMsg(prefix+' pukul '+sheet.last+'.');
+}
+var sheetTimer=null, sheetBusy=false, sheetAgain=false;
+function queueSheet(){
+  if(!sheet.on||!validUrl(sheet.url)||!sheet.pass) return;
+  clearTimeout(sheetTimer);
+  sheetTimer=setTimeout(function(){ sendSheet(); },4000);
+}
+async function sendSheet(){
+  if(!ready) return;
+  if(!validUrl(sheet.url)){ sheetMsg('Isi alamat aplikasi web yang dimulai dengan https://script.google.com dan berakhiran /exec.',true); return; }
+  if(!sheet.pass){ sheetMsg('Isi kata sandi lebih dulu.',true); return; }
+  if(sheetBusy){ sheetAgain=true; return; }
+  sheetBusy=true; sheetMsg('Mengirim…');
+  var body=JSON.stringify(Object.assign({kataSandi:sheet.pass},tableData()));
+  var res=null;
+  try{ res=await fetch(sheet.url,{method:'POST',body:body}); }catch(e){ res=null; }
+  if(res){
+    var out=null;
+    try{ out=await res.json(); }catch(e){}
+    if(out&&out.ok) sheetDone('Terkirim ke Google Sheets');
+    else if(out) sheetMsg('Ditolak oleh skrip: '+(out.pesan||'alasan tidak diketahui')+'.',true);
+    else sheetMsg('Balasan skrip tidak dikenali. Pastikan penerapan diatur ke akses "Siapa saja" dan alamatnya benar.',true);
+  } else {
+    try{
+      await fetch(sheet.url,{method:'POST',mode:'no-cors',body:body});
+      sheetDone('Terkirim, tetapi balasan tidak bisa dibaca. Cek sheet Anda untuk memastikan');
+    }catch(e2){ sheetMsg('Gagal terkirim. Periksa koneksi internet dan alamat skrip.',true); }
+  }
+  sheetBusy=false;
+  if(sheetAgain){ sheetAgain=false; sendSheet(); }
+}
+$('#sheetUrl').value=sheet.url; $('#sheetPass').value=sheet.pass; $('#sheetOn').checked=!!sheet.on;
+if(sheet.last) sheetMsg('Terakhir terkirim pukul '+sheet.last+'.');
+$('#sheetForm').addEventListener('submit',function(ev){
+  ev.preventDefault();
+  readSheetForm();
+  if(sheet.url&&!validUrl(sheet.url)){ sheetMsg('Alamat harus dimulai dengan https://script.google.com dan berakhiran /exec.',true); return; }
+  sheetMsg('Pengaturan disimpan.'+(sheet.on?' Perubahan berikutnya dikirim otomatis.':''));
+  if(sheet.on&&sheet.url&&sheet.pass) sendSheet();
+});
+$('#sheetNow').addEventListener('click',function(){ readSheetForm(); sendSheet(); });
 
 function boot(){
   renderHeader(); route();

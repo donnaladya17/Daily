@@ -57,7 +57,7 @@ h1{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,6vw,42px
 
 /* Tab */
 .tabs{display:flex;gap:4px;margin-top:26px;border-bottom:1px solid var(--line)}
-.tab{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:10px 14px;font-weight:600;color:var(--muted);cursor:pointer;min-height:44px}
+.tab{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:10px 12px;font-weight:600;color:var(--muted);cursor:pointer;min-height:44px}
 .tab[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
 .tab:hover{color:var(--ink)}
 
@@ -70,7 +70,7 @@ h2.sec:first-child{margin-top:0}
 fieldset.bare{border:0;margin:0;padding:0;min-width:0}
 .addrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .addrow .grow{flex:1 1 220px;min-width:0}
-input[type=text],input[type=number],input[type=date],select{
+input[type=text],input[type=number],input[type=date],input[type=url],input[type=password],select{
   background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:0 12px;min-height:44px;min-width:0;
 }
 input::placeholder{color:var(--muted)}
@@ -154,3 +154,18 @@ fieldset:disabled .btn,fieldset:disabled input,fieldset:disabled select{opacity:
   .bar>i{transition:width .35s ease}
   .tab,.btn,.check{transition:background-color .15s ease,color .15s ease}
 }
+
+/* Tab Data */
+.hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+.hint.bad{color:var(--bad)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}
+.sheetform{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.sheetform label{font-weight:600;font-size:14px}
+.sheetform input[type=url],.sheetform input[type=password]{width:100%}
+.sheetform .btnrow{margin-top:6px}
+.check-line{display:flex;align-items:center;gap:10px;margin-top:4px}
+.check-line input{width:20px;height:20px;accent-color:var(--accent)}
+.howto{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.howto summary{cursor:pointer;font-weight:600;min-height:28px}
+.howto ol{padding-left:20px;margin:12px 0 0;display:grid;gap:8px}
+.howto code{background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:13px;overflow-wrap:anywhere}
