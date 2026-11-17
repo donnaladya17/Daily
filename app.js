@@ -129,8 +129,9 @@ function saveFile(name,text){
 document.querySelectorAll('[data-csv]').forEach(function(b){
   b.addEventListener('click',function(){
     if(!ready) return;
-    var k=b.dataset.csv;
-    saveFile('harianku-'+k+'-'+dayStr(0)+'.csv',csvText(tableData()[k]));
+    var k=b.dataset.csv, rows=tableData()[k];
+    if(rows.length<2){ toast('Belum ada data sendiri di perangkat ini untuk diunduh. Isi contoh tidak ikut diunduh.'); return; }
+    saveFile('harianku-'+k+'-'+dayStr(0)+'.csv',csvText(rows));
   });
 });
 
@@ -150,7 +151,8 @@ function readSheetForm(){
 function sheetDone(prefix){
   sheet.last=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
   sheetStore();
-  sheetMsg(prefix+' pukul '+sheet.last+'.');
+  var t=tableData(), n=(t.tugas.length-1)+(t.keuangan.length-1)+(t.kebiasaan.length-1);
+  sheetMsg(prefix+' pukul '+sheet.last+'.'+(n===0?' Belum ada data sendiri di perangkat ini, jadi sheet hanya berisi baris judul. Isi contoh tidak ikut terkirim.':''));
 }
 var sheetTimer=null, sheetBusy=false, sheetAgain=false;
 function queueSheet(){
@@ -368,8 +370,16 @@ function renderHabits(){
   })));
 }
 
+var CSV_LABEL={tugas:'Tugas',keuangan:'Keuangan',kebiasaan:'Kebiasaan'};
+function renderCsvCounts(){
+  var t=tableData();
+  document.querySelectorAll('[data-csv]').forEach(function(b){
+    var k=b.dataset.csv; b.textContent=CSV_LABEL[k]+' ('+(t[k].length-1)+' baris)';
+  });
+}
 function renderAll(){
   if(!ready) return;
+  renderCsvCounts();
   $('#sampleNote').hidden=!state.sample;
   renderGlance(); renderTasks(); renderMoney(); renderHabits();
 }

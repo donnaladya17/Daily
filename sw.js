@@ -1,5 +1,5 @@
 /* Service worker Harianku: simpan berkas aplikasi agar bisa dibuka tanpa internet. */
-var CACHE = 'harianku-v2';
+var CACHE = 'harianku-v3';
 var SHELL = [
   './',
   'index.html',
@@ -24,33 +24,28 @@ self.addEventListener('activate', function (e) {
   );
 });
 
-/* Berkas milik sendiri: ambil dari cache dulu, perbarui di latar belakang.
-   Font Google dan sumber luar lain: coba jaringan, cadangkan ke cache. */
+/* Berkas milik sendiri: ambil dari jaringan dulu supaya versi terbaru langsung tampil,
+   dan pakai cache hanya bila sedang offline.
+   Font Google: coba jaringan, cadangkan ke cache. */
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
+  var sameOrigin = url.origin === self.location.origin;
+  var font = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+  if (!sameOrigin && !font) return;
 
-  if (url.origin === self.location.origin) {
-    e.respondWith(
-      caches.match(req).then(function (hit) {
-        var fresh = fetch(req).then(function (res) {
-          if (res && res.ok) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
-          return res;
-        }).catch(function () { return hit; });
-        return hit || fresh;
-      })
-    );
-    return;
-  }
-
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    e.respondWith(
-      fetch(req).then(function (res) {
+  e.respondWith(
+    fetch(req).then(function (res) {
+      if (res && (res.ok || res.type === 'opaque')) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copy); });
-        return res;
-      }).catch(function () { return caches.match(req); })
-    );
-  }
+      }
+      return res;
+    }).catch(function () {
+      return caches.match(req).then(function (hit) {
+        return hit || (req.mode === 'navigate' ? caches.match('index.html') : Response.error());
+      });
+    })
+  );
 });

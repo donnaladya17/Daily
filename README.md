@@ -79,4 +79,4 @@ Saat pertama dibuka, aplikasi menampilkan data contoh. Tombol "Hapus semua conto
 
 ## Memperbarui
 
-Kalau Anda mengubah berkas aplikasi, naikkan nilai `CACHE` di `sw.js` (misalnya dari `harianku-v2` menjadi `harianku-v3`) supaya HP mengambil versi terbaru.
+Unggah ulang berkas yang berubah ke repositori. Aplikasi mengambil versi terbaru dari internet lebih dulu, jadi perubahan muncul pada pembukaan berikutnya setelah GitHub Pages selesai memperbarui situs (sekitar satu sampai dua menit). Cache hanya dipakai saat HP sedang offline. Kalau Anda mengubah daftar berkas yang disimpan di `sw.js`, naikkan nilai `CACHE` (misalnya dari `harianku-v3` menjadi `harianku-v4`).
